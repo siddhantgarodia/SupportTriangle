@@ -1,0 +1,33 @@
+# Python
+backend/venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Database (local only — Vercel uses /tmp)
+backend/support_triage.db
+*.db
+*.sqlite
+
+# Chroma (replaced by BM25)
+backend/chroma_db/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo

@@ -1,0 +1,8 @@
+backend/venv/
+backend/chroma_db/
+backend/support_triage.db
+frontend/node_modules/
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite

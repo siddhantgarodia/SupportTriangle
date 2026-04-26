@@ -1,0 +1,137 @@
+[
+  {
+    "id": "TCK-0001",
+    "customer_name": "Priya Sharma",
+    "customer_email": "priya.sharma@techcorp.in",
+    "subject": "Double charged this month",
+    "message": "Hi, I noticed my card was charged twice for my Pro plan this month — once on Apr 1 and again on Apr 15. The amounts are identical: $99 each. Can you check and refund the duplicate? My account email is priya.sharma@techcorp.in. This is quite frustrating as it's the second time this has happened.",
+    "created_at": "2026-04-22T10:30:00",
+    "priority": "high"
+  },
+  {
+    "id": "TCK-0002",
+    "customer_name": "Marcus Webb",
+    "customer_email": "m.webb@enterprise.com",
+    "subject": "How do I add a PO number to my next invoice?",
+    "message": "Our finance team requires a purchase order number on all vendor invoices for accounting purposes. I've looked through the settings but can't find where to add it. We're on the Enterprise plan. The PO number for this quarter is PO-2026-Q2-0087. Can you help?",
+    "created_at": "2026-04-22T09:15:00",
+    "priority": "low"
+  },
+  {
+    "id": "TCK-0003",
+    "customer_name": "Yuki Tanaka",
+    "customer_email": "yuki.t@startup.jp",
+    "subject": "Upgrade from Starter to Pro — questions about proration",
+    "message": "I want to upgrade from Starter to Pro today (April 22) but I'm confused about how the prorated billing works. My current cycle runs Apr 1 to Apr 30. How much will I be charged today vs. on May 1? Also, will I immediately get access to Pro features like the 100GB storage?",
+    "created_at": "2026-04-22T08:45:00",
+    "priority": "medium"
+  },
+  {
+    "id": "TCK-0004",
+    "customer_name": "Sofia Hernandez",
+    "customer_email": "sofia@globalretail.mx",
+    "subject": "Tax exemption certificate — need it applied retroactively",
+    "message": "We're a registered non-profit and have been paying VAT on all our invoices for the past 3 months. I've just uploaded our tax exemption certificate to the portal. Can you refund the VAT from invoices Feb, Mar, and April? The total charged in tax is $84. I can provide the invoice numbers if needed.",
+    "created_at": "2026-04-21T16:20:00",
+    "priority": "medium"
+  },
+  {
+    "id": "TCK-0005",
+    "customer_name": "Arjun Patel",
+    "customer_email": "arjun@devtools.io",
+    "subject": "Cannot log in — getting 'account suspended' error",
+    "message": "URGENT: My entire team is locked out of the platform. When we try to log in, we see 'Account suspended — contact support.' We haven't missed any payments. Our billing is current. This is a production blocker — we have a client demo in 2 hours. Account: arjun@devtools.io, team ID: ORG-4492.",
+    "created_at": "2026-04-22T11:00:00",
+    "priority": "high"
+  },
+  {
+    "id": "TCK-0006",
+    "customer_name": "Emma Richardson",
+    "customer_email": "emma.r@fintech.co.uk",
+    "subject": "API returning 500 errors on POST /v2/transactions",
+    "message": "Since about 9am UTC today, our integration has been hitting 500 errors on the POST /v2/transactions endpoint. We're processing ~200 requests per minute and about 30% are failing. The X-Request-ID from one failing request is: req_8f3k2mxp91. Is there a known issue? This is causing data loss on our side.",
+    "created_at": "2026-04-22T10:05:00",
+    "priority": "high"
+  },
+  {
+    "id": "TCK-0007",
+    "customer_name": "Liam O'Connor",
+    "customer_email": "liam@saas-agency.ie",
+    "subject": "Dashboard extremely slow — taking 30+ seconds to load",
+    "message": "The main dashboard has been painfully slow for the past week. It takes 30-45 seconds to load the analytics view. I'm on Chrome 124, MacOS 14.4. Internet is fine (300Mbps). I've tried incognito, same issue. This started around April 15th. Our account has about 50,000 records. Is this a known performance issue?",
+    "created_at": "2026-04-21T14:30:00",
+    "priority": "medium"
+  },
+  {
+    "id": "TCK-0008",
+    "customer_name": "Chen Wei",
+    "customer_email": "chen.wei@logistics-ai.cn",
+    "subject": "Webhook events not being delivered to our endpoint",
+    "message": "Our webhook endpoint at https://hooks.logistics-ai.cn/platform-events has stopped receiving events as of yesterday. The endpoint is healthy and returning 200. I can see in the webhook logs that events are being sent but marked as 'failed'. The error shows 'Connection timeout'. We need these for our order processing pipeline.",
+    "created_at": "2026-04-22T07:30:00",
+    "priority": "high"
+  },
+  {
+    "id": "TCK-0009",
+    "customer_name": "Isabelle Martin",
+    "customer_email": "i.martin@consultancy.fr",
+    "subject": "I want a full refund — purchased 3 days ago",
+    "message": "Bonjour, I signed up for the Pro plan 3 days ago ($99) and the product is not what I expected. The reporting features are much more limited than what was shown in the demo. I'd like a full refund please. I haven't used it beyond the initial setup. My account: i.martin@consultancy.fr",
+    "created_at": "2026-04-22T13:00:00",
+    "priority": "medium"
+  },
+  {
+    "id": "TCK-0010",
+    "customer_name": "David Kim",
+    "customer_email": "david.kim@ecomm.kr",
+    "subject": "Requesting partial refund — cancelled after 20 days",
+    "message": "I cancelled my Pro subscription today, 20 days into the monthly billing cycle. I understand there may be a partial refund available for the unused 10 days. The plan was $99/month. Could you process the prorated refund for the remaining days? Invoice number: INV-2026-04-0782.",
+    "created_at": "2026-04-22T09:00:00",
+    "priority": "medium"
+  },
+  {
+    "id": "TCK-0011",
+    "customer_name": "Fatima Al-Rashid",
+    "customer_email": "fatima@arabtech.ae",
+    "subject": "Annual renewal charged — I want to cancel and get money back",
+    "message": "My annual subscription renewed yesterday for $948 (Pro annual plan). I forgot to cancel before the renewal date. I only remembered because I saw the charge on my card. I haven't used the platform in 2 months and don't plan to. This is a lot of money and I really need it back. Please help.",
+    "created_at": "2026-04-22T12:45:00",
+    "priority": "high"
+  },
+  {
+    "id": "TCK-0012",
+    "customer_name": "James Whitfield",
+    "customer_email": "jwhitfield@bank-corp.com",
+    "subject": "Threatening chargeback if not resolved in 24 hours",
+    "message": "I've been trying to resolve a billing issue for 2 weeks with no response. I was charged $299 for a plan I downgraded from 6 weeks ago. I have email confirmation of the downgrade. If I don't receive a refund within 24 hours, I will be disputing this with my bank and filing a complaint with the consumer protection agency. This is unacceptable service.",
+    "created_at": "2026-04-22T08:00:00",
+    "priority": "high"
+  },
+  {
+    "id": "TCK-0013",
+    "customer_name": "Anika Johansson",
+    "customer_email": "anika.j@nordic-tech.se",
+    "subject": "Feature request: bulk export to Excel",
+    "message": "Hi, I love the platform overall! One thing that would make my life much easier is a bulk export to Excel (.xlsx) format. Right now I can only export to CSV, and I have to convert it every time. Would this be something on the roadmap? Happy to share more details about my workflow if it helps. Keep up the great work!",
+    "created_at": "2026-04-21T11:00:00",
+    "priority": "low"
+  },
+  {
+    "id": "TCK-0014",
+    "customer_name": "Roberto Esposito",
+    "customer_email": "r.esposito@design-studio.it",
+    "subject": "Just wanted to say thanks!",
+    "message": "Hi support team, I just wanted to drop a note to say that your platform has genuinely transformed how our team handles client work. The API is excellent and the onboarding was smooth. Particular shoutout to whoever designed the dashboard — it's very intuitive. No issues to report, just wanted to share some positive feedback for once!",
+    "created_at": "2026-04-21T10:00:00",
+    "priority": "low"
+  },
+  {
+    "id": "TCK-0015",
+    "customer_name": "Ngozi Adeyemi",
+    "customer_email": "ngozi@startup-ng.com",
+    "subject": "Can't log in AND being charged for plan I downgraded",
+    "message": "Two separate issues: (1) I can't log in — getting 'invalid credentials' even after resetting my password. I've cleared cache, tried incognito. (2) I'm being charged $99/month even though I downgraded to Starter ($29) last month. I have a screenshot of the confirmation. I need both issues resolved ASAP. Very frustrated.",
+    "created_at": "2026-04-22T11:30:00",
+    "priority": "high"
+  }
+]
