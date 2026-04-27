@@ -5,6 +5,7 @@ import json
 import uuid
 import threading
 import time
+import logging
 from datetime import datetime
 from difflib import SequenceMatcher
 from typing import Optional
@@ -18,8 +19,10 @@ from ..schemas.response import DraftResponse, KBCitation, DraftWithCitations
 from ..config import GROQ_INTER_CALL_DELAY_SEC, SYNC_TICKET_PROCESSING
 from ..graph import run_triage_pipeline
 from ..few_shot import store_feedback_embedding
+from ..security import validate_ticket_input
 
 router = APIRouter(prefix="/tickets", tags=["tickets"])
+logger = logging.getLogger(__name__)
 
 
 def _row_to_ticket(t: TicketModel) -> Ticket:
@@ -88,7 +91,7 @@ def _process_ticket_background(ticket_id: str, delay: bool = True):
         try:
             classification, draft_with_citations = run_triage_pipeline(ticket_obj)
         except Exception as e:
-            print(f"[Tickets] Pipeline error for {ticket_id}: {e}")
+            logger.error(f"Pipeline error for {ticket_id}: {e}", exc_info=True)
             t.status = "error"
             session.commit()
             return
@@ -104,9 +107,9 @@ def _process_ticket_background(ticket_id: str, delay: bool = True):
             t.citations_json = json.dumps([c.model_dump() for c in draft_with_citations.citations])
 
         session.commit()
-        print(f"[Tickets] Pipeline done for {ticket_id}")
+        logger.info(f"Pipeline completed for {ticket_id}")
     except Exception as e:
-        print(f"[Tickets] Background error for {ticket_id}: {e}")
+        logger.error(f"Background error for {ticket_id}: {e}", exc_info=True)
     finally:
         session.close()
 
@@ -139,6 +142,14 @@ def create_ticket(
     body: TicketCreateRequest,
     current_user: User = Depends(require_specialist_or_above),
 ):
+    # Validate input
+    validate_ticket_input(
+        body.customer_name, 
+        body.customer_email, 
+        body.subject, 
+        body.message
+    )
+    
     session = get_session()
     try:
         ticket_id = f"TCK-{uuid.uuid4().hex[:8].upper()}"
@@ -154,6 +165,8 @@ def create_ticket(
         )
         session.add(row)
         session.commit()
+
+        logger.info(f"Ticket created: {ticket_id} by user {current_user.id}")
 
         if SYNC_TICKET_PROCESSING:
             _process_ticket_background(ticket_id, delay=False)

@@ -2,12 +2,15 @@
 Unified parametrized specialist agent. Loads persona prompt from the DB
 so edits take effect immediately without restart.
 """
+import logging
 from langchain_groq import ChatGroq
 from ..config import GROQ_API_KEY, LLM_MODEL, LLM_TEMPERATURE, RETRIEVAL_TOP_K
 from ..schemas.ticket import Ticket
 from ..schemas.response import DraftResponse, DraftWithCitations, KBCitation
 from ..rag.retriever import retrieve_kb_context
 from ..db import PersonaModel, get_session
+
+logger = logging.getLogger(__name__)
 
 _FALLBACK_DRAFT = DraftResponse(
     response_text=(
@@ -91,9 +94,9 @@ def draft_specialist_response(
             break
         except Exception as e:
             if attempt == 0:
-                print(f"[Specialist:{category}] Retry after error: {e}")
+                logger.warning(f"Specialist ({category}) retry after error: {e}")
                 continue
-            print(f"[Specialist:{category}] Both attempts failed: {e}")
+            logger.error(f"Specialist ({category}) failed after 2 attempts: {e}", exc_info=True)
             draft = _FALLBACK_DRAFT
 
     citations = [

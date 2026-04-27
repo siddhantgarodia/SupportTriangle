@@ -4,9 +4,12 @@ Markdown files are chunked by word count and indexed in memory.
 Indexes are rebuilt on each process start (fast: <1s for typical KB sizes).
 """
 import re
+import logging
 from pathlib import Path
 from rank_bm25 import BM25Okapi
 from ..config import KB_NAMESPACES, CHUNK_WORDS, CHUNK_OVERLAP_WORDS
+
+logger = logging.getLogger(__name__)
 
 # Module-level store: namespace -> {bm25, chunks}
 _indexes: dict = {}
@@ -36,7 +39,7 @@ def _chunk_text(text: str, source_file: str) -> list[dict]:
 def _build_namespace(namespace: str, kb_dir: str) -> int:
     path = Path(kb_dir)
     if not path.exists():
-        print(f"[RAG] Warning: KB directory not found: {kb_dir}")
+        logger.warning(f"KB directory not found: {kb_dir}")
         return 0
 
     all_chunks: list[dict] = []
@@ -57,5 +60,5 @@ def ingest_all_kbs() -> dict[str, int]:
     for namespace, kb_dir in KB_NAMESPACES.items():
         n = _build_namespace(namespace, kb_dir)
         summary[namespace] = n
-        print(f"[RAG] Indexed '{namespace}': {n} chunks")
+        logger.info(f"KB ingestion: '{namespace}' indexed {n} chunks")
     return summary

@@ -1,23 +1,33 @@
 """
 Idempotent seed script. Safe to run multiple times.
-Creates: 5 users, 3 personas, 15 tickets.
+Creates: 5 users with random passwords, 3 personas, 15 tickets.
+IMPORTANT: Generated passwords are logged at startup. Save them securely.
 """
 import json
 import uuid
+import secrets
+import logging
 from datetime import datetime
 from pathlib import Path
 
 from .db import init_db, get_session, UserModel, PersonaModel, TicketModel
 from .auth import hash_password
 
+logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent
 
-SEED_USERS = [
+
+def _generate_password() -> str:
+    """Generate a secure random password."""
+    return secrets.token_urlsafe(16)
+
+
+# Seed user definitions (passwords generated at runtime)
+_SEED_USER_DEFS = [
     {
         "id": "user-admin-001",
         "email": "admin@supporttriangle.com",
         "full_name": "Alex Admin",
-        "password": "admin123",
         "role": "admin",
         "assigned_category": None,
     },
@@ -25,7 +35,6 @@ SEED_USERS = [
         "id": "user-senior-001",
         "email": "senior@supporttriangle.com",
         "full_name": "Sam Senior",
-        "password": "senior123",
         "role": "senior",
         "assigned_category": None,
     },
@@ -33,7 +42,6 @@ SEED_USERS = [
         "id": "user-billing-001",
         "email": "billing@supporttriangle.com",
         "full_name": "Beth Billing",
-        "password": "billing123",
         "role": "specialist",
         "assigned_category": "billing",
     },
@@ -41,7 +49,6 @@ SEED_USERS = [
         "id": "user-technical-001",
         "email": "technical@supporttriangle.com",
         "full_name": "Tom Technical",
-        "password": "technical123",
         "role": "specialist",
         "assigned_category": "technical",
     },
@@ -49,7 +56,6 @@ SEED_USERS = [
         "id": "user-refund-001",
         "email": "refund@supporttriangle.com",
         "full_name": "Rita Refund",
-        "password": "refund123",
         "role": "specialist",
         "assigned_category": "refund",
     },
@@ -64,23 +70,44 @@ PERSONA_FILES = {
 
 def seed_users(session):
     created = 0
-    for u in SEED_USERS:
+    generated_passwords = []
+    
+    for u in _SEED_USER_DEFS:
         existing = session.query(UserModel).filter_by(id=u["id"]).first()
         if existing:
             continue
+        
+        password = _generate_password()
+        generated_passwords.append({
+            "email": u["email"],
+            "password": password,
+        })
+        
         session.add(UserModel(
             id=u["id"],
             email=u["email"],
             full_name=u["full_name"],
-            password_hash=hash_password(u["password"]),
+            password_hash=hash_password(password),
             role=u["role"],
             assigned_category=u["assigned_category"],
             is_active=True,
             created_at=datetime.utcnow(),
         ))
         created += 1
+    
     session.commit()
-    print(f"[Seed] Users: {created} created, {len(SEED_USERS) - created} already existed")
+    
+    # Log generated passwords securely (only displayed at startup)
+    if generated_passwords:
+        logger.warning(
+            "Generated seed user credentials (save these securely and delete this logs):\n"
+            + "\n".join(
+                f"  {p['email']}: {p['password']}"
+                for p in generated_passwords
+            )
+        )
+    
+    logger.info(f"Seed users: {created} created, {len(_SEED_USER_DEFS) - created} already existed")
 
 
 def seed_personas(session):
@@ -99,13 +126,13 @@ def seed_personas(session):
         ))
         created += 1
     session.commit()
-    print(f"[Seed] Personas: {created} created, {3 - created} already existed")
+    logger.info(f"Seed personas: {created} created, {3 - created} already existed")
 
 
 def seed_tickets(session):
     sample_path = BASE_DIR / "data" / "sample_tickets.json"
     if not sample_path.exists():
-        print("[Seed] sample_tickets.json not found — skipping tickets")
+        logger.warning("sample_tickets.json not found — skipping tickets")
         return
 
     tickets_data = json.loads(sample_path.read_text())
@@ -127,7 +154,7 @@ def seed_tickets(session):
         ))
         created += 1
     session.commit()
-    print(f"[Seed] Tickets: {created} created, {len(tickets_data) - created} already existed")
+    logger.info(f"Seed tickets: {created} created, {len(tickets_data) - created} already existed")
 
 
 def seed_all():
@@ -137,7 +164,7 @@ def seed_all():
         seed_users(session)
         seed_personas(session)
         seed_tickets(session)
-        print("[Seed] Done.")
+        logger.info("Seed completed successfully")
     finally:
         session.close()
 

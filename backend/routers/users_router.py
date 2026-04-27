@@ -1,12 +1,15 @@
 import uuid
+import logging
 from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from ..db import UserModel, AuditLogModel, get_session
 from ..auth import hash_password, require_admin
 from ..schemas.user import User, UserCreate
+from ..security import validate_email, validate_password
 
 router = APIRouter(prefix="/users", tags=["users"])
+logger = logging.getLogger(__name__)
 
 
 def _row_to_user(u: UserModel) -> User:
@@ -42,9 +45,17 @@ def create_user(
     body: UserCreate,
     current_user: User = Depends(require_admin),
 ):
+    # Validate email
+    if not validate_email(body.email):
+        raise HTTPException(status_code=400, detail="Invalid email format")
+    
+    # Validate password
+    validate_password(body.password)
+    
     session = get_session()
     try:
         if session.query(UserModel).filter_by(email=body.email).first():
+            logger.warning(f"Attempt to create user with existing email: {body.email}")
             raise HTTPException(status_code=409, detail="Email already registered")
 
         new_user = UserModel(
@@ -65,6 +76,9 @@ def create_user(
             target_id=new_user.id,
         ))
         session.commit()
+        
+        logger.info(f"User created: {new_user.id} ({body.email}) by {current_user.id}")
+        
         return _row_to_user(new_user)
     finally:
         session.close()

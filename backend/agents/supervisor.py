@@ -4,10 +4,12 @@ It has NO access to the knowledge base — its only job is routing.
 Uses Groq structured output so we get a validated Pydantic model back.
 """
 from pathlib import Path
+import logging
 from langchain_groq import ChatGroq
 from ..config import GROQ_API_KEY, LLM_MODEL, LLM_TEMPERATURE
 from ..schemas.ticket import TicketClassification
 
+logger = logging.getLogger(__name__)
 _PROMPT_FILE = Path(__file__).resolve().parent.parent / "prompts" / "classify.txt"
 
 
@@ -36,9 +38,9 @@ def classify_ticket(subject: str, message: str) -> TicketClassification:
             return result
         except Exception as e:
             if attempt == 0:
-                print(f"[Supervisor] Retry after error: {e}")
+                logger.warning(f"Classification retry after error: {e}")
                 continue
-            print(f"[Supervisor] Both attempts failed: {e}")
+            logger.error(f"Classification failed after 2 attempts: {e}", exc_info=True)
             return TicketClassification(
                 category="other",
                 confidence=0.0,

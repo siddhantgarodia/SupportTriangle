@@ -3,6 +3,7 @@ LangGraph multi-agent pipeline:
   START → supervisor → fetch_few_shot → [router] → {billing|technical|refund|fallback} → END
 """
 from typing import Optional, TypedDict
+import logging
 from langgraph.graph import StateGraph, END
 from .schemas.ticket import Ticket, TicketClassification
 from .schemas.response import DraftWithCitations
@@ -11,6 +12,8 @@ from .agents.specialist import draft_specialist_response
 from .agents.fallback import fallback_draft
 from .few_shot import get_few_shot_examples
 from .config import CLASSIFICATION_MIN_CONFIDENCE
+
+logger = logging.getLogger(__name__)
 
 
 class TriageState(TypedDict):
@@ -121,7 +124,7 @@ def run_triage_pipeline(ticket: Ticket) -> tuple[Optional[TicketClassification],
         "error": None,
     }
     final_state = _graph.invoke(initial_state)
-    print(f"[Graph] {ticket.id} log: {final_state['log']}")
+    logger.debug(f"Pipeline for {ticket.id}: {' -> '.join(final_state['log'])}")
 
     classification = final_state.get("classification")
     if final_state["draft_with_citations"] is None:

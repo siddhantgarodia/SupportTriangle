@@ -7,7 +7,7 @@ load_dotenv(BASE_DIR / ".env")
 load_dotenv()
 
 # LLM (Groq)
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
 LLM_MODEL = "llama-3.3-70b-versatile"
 LLM_TEMPERATURE = 0.2
 
@@ -29,9 +29,13 @@ _db_dir = "/tmp" if _IS_VERCEL else str(BASE_DIR)
 SQLITE_PATH = os.environ.get("SQLITE_PATH", str(Path(_db_dir) / "support_triage.db"))
 
 # Auth
-JWT_SECRET = os.getenv("JWT_SECRET", "dev-only-change-in-production")
+JWT_SECRET = os.getenv("JWT_SECRET", "").strip()
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRY_MINUTES = 60 * 8  # 8 hours
+
+# CORS — restrict to specific origins in production
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+ALLOWED_ORIGINS = [origin.strip() for origin in ALLOWED_ORIGINS]
 
 # SLA targets in hours per category
 SLA_TARGETS_HOURS = {
@@ -51,6 +55,12 @@ GROQ_INTER_CALL_DELAY_SEC = float(os.environ.get("GROQ_INTER_CALL_DELAY_SEC", "5
 
 if not GROQ_API_KEY:
     raise RuntimeError(
-        "GROQ_API_KEY not set. Get a free key at https://console.groq.com "
-        "and add to backend/.env as GROQ_API_KEY=gsk_..."
+        "GROQ_API_KEY is required. Get a free key at https://console.groq.com "
+        "and set environment variable GROQ_API_KEY=gsk_..."
+    )
+
+if not JWT_SECRET or len(JWT_SECRET) < 32:
+    raise RuntimeError(
+        "JWT_SECRET is required and must be at least 32 characters. "
+        "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
     )
