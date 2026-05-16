@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Optional
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -54,7 +55,7 @@ SYNC_TICKET_PROCESSING = _IS_VERCEL or bool(os.environ.get("SYNC_TICKET_PROCESSI
 # Only applied during batch startup requeue, not per-request.
 GROQ_INTER_CALL_DELAY_SEC = float(os.environ.get("GROQ_INTER_CALL_DELAY_SEC", "5"))
 
-CONFIG_ERROR: str | None = None
+CONFIG_ERROR: Optional[str] = None
 
 if not GROQ_API_KEY:
     CONFIG_ERROR = (
