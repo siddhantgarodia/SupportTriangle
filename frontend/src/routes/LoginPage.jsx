@@ -26,7 +26,15 @@ export default function LoginPage() {
       await login(email, password);
       navigate("/tickets", { replace: true });
     } catch (err) {
-      setError(err.response?.data?.detail || "Login failed");
+      const detail = err.response?.data?.detail;
+      const status = err.response?.status;
+      if (detail) {
+        setError(Array.isArray(detail) ? detail[0]?.msg : detail);
+      } else if (status) {
+        setError(`Server error (HTTP ${status}). Check Vercel environment variables.`);
+      } else {
+        setError("Cannot reach the server. Check your deployment configuration.");
+      }
     } finally {
       setLoading(false);
     }

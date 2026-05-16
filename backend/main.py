@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .logging_config import setup_logging
-from .config import SYNC_TICKET_PROCESSING, ALLOWED_ORIGINS
+from .config import SYNC_TICKET_PROCESSING, ALLOWED_ORIGINS, CONFIG_ERROR
 from .db import init_db
 from .seed import seed_all
 from .rag.ingest_kbs import ingest_all_kbs
@@ -54,6 +54,10 @@ def _requeue_pending():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    if CONFIG_ERROR:
+        logger.error(f"Startup blocked — misconfiguration: {CONFIG_ERROR}")
+        yield
+        return
     init_db()
     seed_all()
     ingest_all_kbs()
@@ -69,14 +73,27 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware: restricted origins
+# CORS middleware.
+# allow_credentials must be False when allow_origins contains "*" — browsers reject
+# the combination. This app uses JWT in the Authorization header, not cookies,
+# so credentials=False is correct.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def config_check_middleware(request: Request, call_next):
+    if CONFIG_ERROR and request.url.path != "/health":
+        return JSONResponse(
+            status_code=503,
+            content={"detail": f"Server misconfigured: {CONFIG_ERROR}"},
+        )
+    return await call_next(request)
 
 
 _rate_limit_store: dict = defaultdict(list)
@@ -149,5 +166,9 @@ app.include_router(analytics_router)
 
 @app.get("/health")
 def health():
-    logger.debug("Health check")
+    if CONFIG_ERROR:
+        return JSONResponse(
+            status_code=503,
+            content={"status": "misconfigured", "error": CONFIG_ERROR},
+        )
     return {"status": "ok", "version": "2.0.0"}

@@ -54,14 +54,15 @@ SYNC_TICKET_PROCESSING = _IS_VERCEL or bool(os.environ.get("SYNC_TICKET_PROCESSI
 # Only applied during batch startup requeue, not per-request.
 GROQ_INTER_CALL_DELAY_SEC = float(os.environ.get("GROQ_INTER_CALL_DELAY_SEC", "5"))
 
-if not GROQ_API_KEY:
-    raise RuntimeError(
-        "GROQ_API_KEY is required. Get a free key at https://console.groq.com "
-        "and set environment variable GROQ_API_KEY=gsk_..."
-    )
+CONFIG_ERROR: str | None = None
 
-if not JWT_SECRET or len(JWT_SECRET) < 32:
-    raise RuntimeError(
-        "JWT_SECRET is required and must be at least 32 characters. "
+if not GROQ_API_KEY:
+    CONFIG_ERROR = (
+        "GROQ_API_KEY is not set. Add it in the Vercel dashboard under "
+        "Settings → Environment Variables."
+    )
+elif not JWT_SECRET or len(JWT_SECRET) < 32:
+    CONFIG_ERROR = (
+        "JWT_SECRET is not set or is shorter than 32 characters. "
         "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
     )
