@@ -1,9 +1,9 @@
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
-from ..db import PersonaModel, AuditLogModel, get_session
-from ..auth import get_current_user, require_senior_or_above
-from ..schemas.user import User
-from ..schemas.persona import Persona, PersonaUpdate
+from db import PersonaModel, AuditLogModel, get_session
+from auth import get_current_user, require_senior_or_above
+from schemas.user import User
+from schemas.persona import Persona, PersonaUpdate
 
 router = APIRouter(prefix="/personas", tags=["personas"])
 

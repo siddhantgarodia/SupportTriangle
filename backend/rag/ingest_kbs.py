@@ -7,7 +7,7 @@ import re
 import logging
 from pathlib import Path
 from rank_bm25 import BM25Okapi
-from ..config import KB_NAMESPACES, CHUNK_WORDS, CHUNK_OVERLAP_WORDS
+from config import KB_NAMESPACES, CHUNK_WORDS, CHUNK_OVERLAP_WORDS
 
 logger = logging.getLogger(__name__)
 

@@ -7,8 +7,8 @@ No embedding model or binary blobs required.
 """
 import re
 from rank_bm25 import BM25Okapi
-from .config import FEW_SHOT_TOP_K
-from .db import get_session, FeedbackLogModel
+from config import FEW_SHOT_TOP_K
+from db import get_session, FeedbackLogModel
 
 
 def _tokenize(text: str) -> list[str]:

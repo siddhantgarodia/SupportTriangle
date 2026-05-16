@@ -12,9 +12,9 @@ import jwt
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 
-from .config import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRY_MINUTES
-from .db import UserModel, get_session
-from .schemas.user import User, Role
+from config import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRY_MINUTES
+from db import UserModel, get_session
+from schemas.user import User, Role
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 

@@ -3,10 +3,10 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from ..db import UserModel, AuditLogModel, get_session
-from ..auth import verify_password, create_access_token, get_current_user, hash_password
-from ..schemas.user import User, UserCreate, TokenResponse
-from ..security import validate_email, validate_password
+from db import UserModel, AuditLogModel, get_session
+from auth import verify_password, create_access_token, get_current_user, hash_password
+from schemas.user import User, UserCreate, TokenResponse
+from security import validate_email, validate_password
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 logger = logging.getLogger(__name__)

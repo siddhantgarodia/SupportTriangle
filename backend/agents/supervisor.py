@@ -6,8 +6,8 @@ Uses Groq structured output so we get a validated Pydantic model back.
 from pathlib import Path
 import logging
 from langchain_groq import ChatGroq
-from ..config import GROQ_API_KEY, LLM_MODEL, LLM_TEMPERATURE
-from ..schemas.ticket import TicketClassification
+from config import GROQ_API_KEY, LLM_MODEL, LLM_TEMPERATURE
+from schemas.ticket import TicketClassification
 
 logger = logging.getLogger(__name__)
 _PROMPT_FILE = Path(__file__).resolve().parent.parent / "prompts" / "classify.txt"

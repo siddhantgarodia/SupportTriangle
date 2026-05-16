@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, Query
-from ..auth import require_senior_or_above
-from ..schemas.user import User
-from ..schemas.analytics import AnalyticsResponse
-from ..analytics import get_full_analytics, Window
+from auth import require_senior_or_above
+from schemas.user import User
+from schemas.analytics import AnalyticsResponse
+from analytics import get_full_analytics, Window
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 

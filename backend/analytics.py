@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from typing import Literal
 
-from .db import TicketModel, FeedbackLogModel, UserModel, get_session
-from .config import SLA_TARGETS_HOURS
-from .schemas.analytics import (
+from db import TicketModel, FeedbackLogModel, UserModel, get_session
+from config import SLA_TARGETS_HOURS
+from schemas.analytics import (
     KPIBundle, TimeSeriesPoint, CategoryBreakdown, AgentStats, AnalyticsResponse
 )
 

@@ -9,8 +9,8 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
-from .db import init_db, get_session, UserModel, PersonaModel, TicketModel
-from .auth import hash_password
+from db import init_db, get_session, UserModel, PersonaModel, TicketModel
+from auth import hash_password
 
 logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent

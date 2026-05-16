@@ -5,13 +5,13 @@ LangGraph multi-agent pipeline:
 from typing import Optional, TypedDict
 import logging
 from langgraph.graph import StateGraph, END
-from .schemas.ticket import Ticket, TicketClassification
-from .schemas.response import DraftWithCitations
-from .agents.supervisor import classify_ticket
-from .agents.specialist import draft_specialist_response
-from .agents.fallback import fallback_draft
-from .few_shot import get_few_shot_examples
-from .config import CLASSIFICATION_MIN_CONFIDENCE
+from schemas.ticket import Ticket, TicketClassification
+from schemas.response import DraftWithCitations
+from agents.supervisor import classify_ticket
+from agents.specialist import draft_specialist_response
+from agents.fallback import fallback_draft
+from few_shot import get_few_shot_examples
+from config import CLASSIFICATION_MIN_CONFIDENCE
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +128,7 @@ def run_triage_pipeline(ticket: Ticket) -> tuple[Optional[TicketClassification],
 
     classification = final_state.get("classification")
     if final_state["draft_with_citations"] is None:
-        from .schemas.response import DraftResponse
+        from schemas.response import DraftResponse
         return classification, DraftWithCitations(
             draft=DraftResponse(
                 response_text="Pipeline failed — please handle manually.",

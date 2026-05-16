@@ -1,5 +1,5 @@
 """For tickets classified as 'other' or with low confidence."""
-from ..schemas.response import DraftResponse, DraftWithCitations
+from schemas.response import DraftResponse, DraftWithCitations
 
 
 def fallback_draft() -> DraftWithCitations:

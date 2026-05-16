@@ -2,8 +2,8 @@
 BM25-based KB retrieval. No vector store, no embedding model.
 Queries the in-memory indexes built by ingest_kbs.ingest_all_kbs().
 """
-from .ingest_kbs import _indexes, _tokenize
-from ..config import RETRIEVAL_TOP_K
+from rag.ingest_kbs import _indexes, _tokenize
+from config import RETRIEVAL_TOP_K
 
 
 def retrieve_kb_context(

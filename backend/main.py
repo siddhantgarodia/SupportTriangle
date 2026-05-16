@@ -1,6 +1,12 @@
 """
 FastAPI entry point with lifespan-based startup.
 """
+import sys
+import os
+# Ensure the backend directory is on the path so absolute imports work whether
+# this file is run as a package (uvicorn backend.main:app) or as a script (Vercel).
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from collections import defaultdict
 from contextlib import asynccontextmanager
 import threading
@@ -12,16 +18,16 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from .logging_config import setup_logging
-from .config import SYNC_TICKET_PROCESSING, ALLOWED_ORIGINS, CONFIG_ERROR
-from .db import init_db
-from .seed import seed_all
-from .rag.ingest_kbs import ingest_all_kbs
-from .routers.auth_router import router as auth_router
-from .routers.tickets_router import router as tickets_router, _process_ticket_background
-from .routers.personas_router import router as personas_router
-from .routers.users_router import router as users_router
-from .routers.analytics_router import router as analytics_router
+from logging_config import setup_logging
+from config import SYNC_TICKET_PROCESSING, ALLOWED_ORIGINS, CONFIG_ERROR
+from db import init_db
+from seed import seed_all
+from rag.ingest_kbs import ingest_all_kbs
+from routers.auth_router import router as auth_router
+from routers.tickets_router import router as tickets_router, _process_ticket_background
+from routers.personas_router import router as personas_router
+from routers.users_router import router as users_router
+from routers.analytics_router import router as analytics_router
 
 # Setup logging
 setup_logging()
@@ -30,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 def _requeue_pending():
     """Process any tickets left in 'new' or 'processing' state from a prior run."""
-    from .db import get_session, TicketModel
+    from db import get_session, TicketModel
     time.sleep(2)
     session = get_session()
     try:

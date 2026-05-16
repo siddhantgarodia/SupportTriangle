@@ -12,7 +12,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
-from .config import SQLITE_PATH
+from config import SQLITE_PATH
 
 Base = declarative_base()
 

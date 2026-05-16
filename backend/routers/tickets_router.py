@@ -11,15 +11,15 @@ from difflib import SequenceMatcher
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from ..db import TicketModel, FeedbackLogModel, AuditLogModel, get_session
-from ..auth import get_current_user, require_specialist_or_above, require_senior_or_above
-from ..schemas.user import User
-from ..schemas.ticket import Ticket, TicketClassification, TicketCreateRequest, TicketActionRequest
-from ..schemas.response import DraftResponse, KBCitation, DraftWithCitations
-from ..config import GROQ_INTER_CALL_DELAY_SEC, SYNC_TICKET_PROCESSING
-from ..graph import run_triage_pipeline
-from ..few_shot import store_feedback_embedding
-from ..security import validate_ticket_input
+from db import TicketModel, FeedbackLogModel, AuditLogModel, get_session
+from auth import get_current_user, require_specialist_or_above, require_senior_or_above
+from schemas.user import User
+from schemas.ticket import Ticket, TicketClassification, TicketCreateRequest, TicketActionRequest
+from schemas.response import DraftResponse, KBCitation, DraftWithCitations
+from config import GROQ_INTER_CALL_DELAY_SEC, SYNC_TICKET_PROCESSING
+from graph import run_triage_pipeline
+from few_shot import store_feedback_embedding
+from security import validate_ticket_input
 
 router = APIRouter(prefix="/tickets", tags=["tickets"])
 logger = logging.getLogger(__name__)
@@ -81,7 +81,7 @@ def _process_ticket_background(ticket_id: str, delay: bool = True):
         if not t:
             return
 
-        from ..schemas.ticket import Ticket as TicketSchema
+        from schemas.ticket import Ticket as TicketSchema
         ticket_obj = TicketSchema(
             id=t.id,
             customer_name=t.customer_name,

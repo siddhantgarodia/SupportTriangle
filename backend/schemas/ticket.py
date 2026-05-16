@@ -43,5 +43,5 @@ class TicketActionRequest(BaseModel):
     rejection_reason: Optional[str] = None
 
 
-from .response import DraftResponse  # noqa: E402
+from schemas.response import DraftResponse  # noqa: E402
 Ticket.model_rebuild()
