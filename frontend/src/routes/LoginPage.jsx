@@ -2,6 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
+const DEMO_ACCOUNTS = [
+  { email: "admin@supporttriangle.com", password: "admin123", role: "Admin", color: "bg-purple-100 text-purple-800" },
+  { email: "senior@supporttriangle.com", password: "senior123", role: "Senior", color: "bg-blue-100 text-blue-800" },
+  { email: "billing@supporttriangle.com", password: "billing123", role: "Billing", color: "bg-green-100 text-green-800" },
+  { email: "technical@supporttriangle.com", password: "technical123", role: "Technical", color: "bg-yellow-100 text-yellow-800" },
+  { email: "refund@supporttriangle.com", password: "refund123", role: "Refund", color: "bg-red-100 text-red-800" },
+];
+
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -22,6 +30,12 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function fillCredentials(account) {
+    setEmail(account.email);
+    setPassword(account.password);
+    setError("");
   }
 
   return (
@@ -68,10 +82,25 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-6 pt-4 border-t border-gray-100">
-          <p className="text-xs text-gray-500 font-medium mb-1">Demo accounts</p>
-          <p className="text-xs text-gray-400">
-            Credentials are generated at startup and printed to the server logs.
-          </p>
+          <p className="text-xs font-medium text-gray-500 mb-2">Demo accounts — click to fill</p>
+          <div className="space-y-1">
+            {DEMO_ACCOUNTS.map((account) => (
+              <button
+                key={account.email}
+                type="button"
+                onClick={() => fillCredentials(account)}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors text-left group"
+              >
+                <div>
+                  <span className="text-xs font-medium text-gray-700">{account.email}</span>
+                  <span className="text-xs text-gray-400 ml-2">{account.password}</span>
+                </div>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${account.color}`}>
+                  {account.role}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

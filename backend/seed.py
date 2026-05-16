@@ -5,7 +5,6 @@ IMPORTANT: Generated passwords are logged at startup. Save them securely.
 """
 import json
 import uuid
-import secrets
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -17,12 +16,7 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent
 
 
-def _generate_password() -> str:
-    """Generate a secure random password."""
-    return secrets.token_urlsafe(16)
-
-
-# Seed user definitions (passwords generated at runtime)
+# Seed user definitions with fixed demo passwords
 _SEED_USER_DEFS = [
     {
         "id": "user-admin-001",
@@ -30,6 +24,7 @@ _SEED_USER_DEFS = [
         "full_name": "Alex Admin",
         "role": "admin",
         "assigned_category": None,
+        "password": "admin123",
     },
     {
         "id": "user-senior-001",
@@ -37,6 +32,7 @@ _SEED_USER_DEFS = [
         "full_name": "Sam Senior",
         "role": "senior",
         "assigned_category": None,
+        "password": "senior123",
     },
     {
         "id": "user-billing-001",
@@ -44,6 +40,7 @@ _SEED_USER_DEFS = [
         "full_name": "Beth Billing",
         "role": "specialist",
         "assigned_category": "billing",
+        "password": "billing123",
     },
     {
         "id": "user-technical-001",
@@ -51,6 +48,7 @@ _SEED_USER_DEFS = [
         "full_name": "Tom Technical",
         "role": "specialist",
         "assigned_category": "technical",
+        "password": "technical123",
     },
     {
         "id": "user-refund-001",
@@ -58,6 +56,7 @@ _SEED_USER_DEFS = [
         "full_name": "Rita Refund",
         "role": "specialist",
         "assigned_category": "refund",
+        "password": "refund123",
     },
 ]
 
@@ -70,43 +69,22 @@ PERSONA_FILES = {
 
 def seed_users(session):
     created = 0
-    generated_passwords = []
-    
     for u in _SEED_USER_DEFS:
         existing = session.query(UserModel).filter_by(id=u["id"]).first()
         if existing:
             continue
-        
-        password = _generate_password()
-        generated_passwords.append({
-            "email": u["email"],
-            "password": password,
-        })
-        
         session.add(UserModel(
             id=u["id"],
             email=u["email"],
             full_name=u["full_name"],
-            password_hash=hash_password(password),
+            password_hash=hash_password(u["password"]),
             role=u["role"],
             assigned_category=u["assigned_category"],
             is_active=True,
             created_at=datetime.utcnow(),
         ))
         created += 1
-    
     session.commit()
-    
-    # Log generated passwords securely (only displayed at startup)
-    if generated_passwords:
-        logger.warning(
-            "Generated seed user credentials (save these securely and delete this logs):\n"
-            + "\n".join(
-                f"  {p['email']}: {p['password']}"
-                for p in generated_passwords
-            )
-        )
-    
     logger.info(f"Seed users: {created} created, {len(_SEED_USER_DEFS) - created} already existed")
 
 
