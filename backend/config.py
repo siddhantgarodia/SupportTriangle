@@ -33,9 +33,10 @@ JWT_SECRET = os.getenv("JWT_SECRET", "").strip()
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRY_MINUTES = 60 * 8  # 8 hours
 
-# CORS — restrict to specific origins in production
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
-ALLOWED_ORIGINS = [origin.strip() for origin in ALLOWED_ORIGINS]
+# CORS — on Vercel the frontend and backend share the same origin so "*" is safe;
+# override with a comma-separated list via ALLOWED_ORIGINS for stricter control.
+_raw_origins = os.getenv("ALLOWED_ORIGINS", "*")
+ALLOWED_ORIGINS = [o.strip() for o in _raw_origins.split(",")]
 
 # SLA targets in hours per category
 SLA_TARGETS_HOURS = {
