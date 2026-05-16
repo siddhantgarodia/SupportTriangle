@@ -1,6 +1,7 @@
 """
 FastAPI entry point with lifespan-based startup.
 """
+from collections import defaultdict
 from contextlib import asynccontextmanager
 import threading
 import time
@@ -9,10 +10,10 @@ import uuid
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from .logging_config import setup_logging
 from .config import SYNC_TICKET_PROCESSING, ALLOWED_ORIGINS
-from .security import rate_limit_middleware, add_security_headers
 from .db import init_db
 from .seed import seed_all
 from .rag.ingest_kbs import ingest_all_kbs
@@ -68,10 +69,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Security middleware: add before CORS
-app.add_middleware(add_security_headers)
-app.add_middleware(rate_limit_middleware)
-
 # CORS middleware: restricted origins
 app.add_middleware(
     CORSMiddleware,
@@ -80,6 +77,40 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+
+_rate_limit_store: dict = defaultdict(list)
+_RATE_LIMIT_REQUESTS = 100
+_RATE_LIMIT_WINDOW = 60  # seconds
+
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.time()
+    window_start = now - _RATE_LIMIT_WINDOW
+
+    timestamps = [t for t in _rate_limit_store.get(client_ip, []) if t > window_start]
+    if len(timestamps) >= _RATE_LIMIT_REQUESTS:
+        logger.warning(f"Rate limit exceeded for {client_ip}")
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Rate limit exceeded. Please try again later."},
+            headers={"Retry-After": str(_RATE_LIMIT_WINDOW)},
+        )
+    _rate_limit_store[client_ip] = timestamps + [now]
+    return await call_next(request)
+
+
+@app.middleware("http")
+async def security_middleware(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';"
+    return response
 
 
 @app.middleware("http")

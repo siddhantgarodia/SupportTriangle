@@ -58,6 +58,11 @@ def _row_to_ticket(t: TicketModel) -> Ticket:
     )
 
 
+def _escape_like(value: str) -> str:
+    """Escape LIKE pattern wildcards in a value to prevent unintended matches."""
+    return value.replace("\\", "\\\\").replace("%", r"\%").replace("_", r"\_")
+
+
 def _normalized_edit_distance(a: str, b: str) -> float:
     if not a and not b:
         return 0.0
@@ -123,10 +128,10 @@ def list_tickets(
     try:
         q = session.query(TicketModel)
         if current_user.role == "specialist" and current_user.assigned_category:
-            cat = current_user.assigned_category
+            cat = _escape_like(current_user.assigned_category)
             q = q.filter(
-                TicketModel.classification_json.like(f'%"category": "{cat}"%') |
-                TicketModel.classification_json.like(f'%"category":"{cat}"%') |
+                TicketModel.classification_json.like(f'%"category": "{cat}"%', escape="\\") |
+                TicketModel.classification_json.like(f'%"category":"{cat}"%', escape="\\") |
                 TicketModel.status.in_(["new", "processing"])
             )
         if status:

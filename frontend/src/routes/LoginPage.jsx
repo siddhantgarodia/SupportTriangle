@@ -68,14 +68,10 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-6 pt-4 border-t border-gray-100">
-          <p className="text-xs text-gray-500 font-medium mb-2">Demo accounts:</p>
-          <div className="space-y-1 text-xs text-gray-500">
-            <div>admin@supporttriangle.com / admin123</div>
-            <div>senior@supporttriangle.com / senior123</div>
-            <div>billing@supporttriangle.com / billing123</div>
-            <div>technical@supporttriangle.com / technical123</div>
-            <div>refund@supporttriangle.com / refund123</div>
-          </div>
+          <p className="text-xs text-gray-500 font-medium mb-1">Demo accounts</p>
+          <p className="text-xs text-gray-400">
+            Credentials are generated at startup and printed to the server logs.
+          </p>
         </div>
       </div>
     </div>
